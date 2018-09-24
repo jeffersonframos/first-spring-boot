@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,18 +73,18 @@ public class AthleteServiceImpl implements AthleteService {
     }
 
     @Override
-    public List<AthleteDTO> findAll(Map<String, String> parameters) throws ResourceNotFounException {
+    public Page<AthleteDTO> findAll(Map<String, String> parameters) throws ResourceNotFounException {
         List<Athlete> athletes;
         if (generalFunctions.verifyParameters(parameters)) {
             athletes = repository.findAll(generalFunctions.createPageable(parameters)).getContent();
         } else {
             athletes = repository.findAll();
         }
-        return createListAthleteDTO(athletes);
+        return new PageImpl<>(createListAthleteDTO(athletes));
     }
 
     @Override
-    public List<AthleteDTO> findBySport(long sportId, Map<String, String> parameters) throws ResourceNotFounException {
+    public Page<AthleteDTO> findBySport(long sportId, Map<String, String> parameters) throws ResourceNotFounException {
         Sport sport = sportService.getOne(sportId);
         List<AthleteDTO> athleteDTOs;
         if (generalFunctions.verifyParameters(parameters)) {
@@ -97,7 +99,7 @@ public class AthleteServiceImpl implements AthleteService {
                 throw new RuntimeException(ex);
             }
         });
-        return athleteDTOs;
+        return new PageImpl<>(athleteDTOs);
     }
 
     private Athlete getAthlete(long id) throws ResourceNotFounException {
@@ -126,7 +128,7 @@ public class AthleteServiceImpl implements AthleteService {
 
     private List<Long> createListSports(long athleteId) throws ResourceNotFounException {
         List<Long> sports = new ArrayList<>();
-        List<SportDTO> sportDTOs = sportService.findByAthlete(athleteId, null);
+        List<SportDTO> sportDTOs = sportService.findByAthlete(athleteId, null).getContent();
         sportDTOs.forEach((sportDTO) -> {
             sports.add(sportDTO.getId());
         });

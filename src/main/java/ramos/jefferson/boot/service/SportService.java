@@ -2,6 +2,7 @@ package ramos.jefferson.boot.service;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
 import ramos.jefferson.boot.dto.SportDTO;
 import ramos.jefferson.boot.entity.Sport;
 import ramos.jefferson.boot.exception.BadRequestException;
@@ -19,8 +20,8 @@ public interface SportService {
     
     public SportDTO findOne(long id) throws ResourceNotFounException;
     
-    public List<SportDTO> findAll(Map<String, String> parameters);
+    public Page<SportDTO> findAll(Map<String, String> parameters);
     
-    public List<SportDTO> findByAthlete(long athleteId, Map<String, String> parameters) throws ResourceNotFounException;
+    public Page<SportDTO> findByAthlete(long athleteId, Map<String, String> parameters) throws ResourceNotFounException;
 
 }

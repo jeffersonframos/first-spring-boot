@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,20 +64,26 @@ public class SportServiceImpl implements SportService {
     }
 
     @Override
-    public List<SportDTO> findAll(Map<String, String> parameters) {
+    public Page<SportDTO> findAll(Map<String, String> parameters) {
+        List<SportDTO> sportDTOs;
         if (generalFunctions.verifyParameters(parameters)) {
-            return createListSportDTO(repository.findAll(generalFunctions.createPageable(parameters)).getContent());
+            sportDTOs = createListSportDTO(repository.findAll(generalFunctions.createPageable(parameters)).getContent());
+        } else {
+            sportDTOs = createListSportDTO(repository.findAll());
         }
-        return createListSportDTO(repository.findAll());
+        return new PageImpl<>(sportDTOs);
     }
 
     @Override
-    public List<SportDTO> findByAthlete(long athleteId, Map<String, String> parameters) throws ResourceNotFounException {
+    public Page<SportDTO> findByAthlete(long athleteId, Map<String, String> parameters) throws ResourceNotFounException {
         Athlete athlete = athleteService.getOne(athleteId);
+        List<SportDTO> sportDTOs;
         if (generalFunctions.verifyParameters(parameters)) {
-            return repository.findByAthlete(athlete, generalFunctions.createPageable(parameters));
+            sportDTOs = repository.findByAthlete(athlete, generalFunctions.createPageable(parameters));
+        } else {
+            sportDTOs = repository.findByAthlete(athlete);
         }
-        return repository.findByAthlete(athlete);
+        return new PageImpl<>(sportDTOs);
     }
 
     private SportDTO createSportDTO(Sport sport) {

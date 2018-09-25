@@ -20,6 +20,9 @@ import ramos.jefferson.boot.util.GeneralFunctions;
 
 @Service
 public class SportServiceImpl implements SportService {
+    
+    @Autowired
+    private AthleteSportService athleteSportService;
 
     @Autowired
     private GeneralFunctions generalFunctions;
@@ -50,7 +53,9 @@ public class SportServiceImpl implements SportService {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void delete(long id) throws ResourceNotFounException {
-        repository.deleteById(id);
+        Sport sport = getSport(id);
+        athleteSportService.delete(sport);
+        repository.delete(sport);
     }
 
     @Override

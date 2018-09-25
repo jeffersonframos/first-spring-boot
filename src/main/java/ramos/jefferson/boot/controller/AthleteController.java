@@ -44,6 +44,17 @@ public class AthleteController {
         }
     }
     
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") String stringId) throws BadRequestException, ResourceNotFounException {
+        try {
+            long id = Long.parseLong(stringId);
+            athleteService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (NumberFormatException ex) {
+            throw new BadRequestException("Invalid parameter: must be a number");
+        }
+    }
+    
     @GetMapping("")
     public ResponseEntity<?> get(@RequestParam(required = false) Map<String, String> parameters) throws ResourceNotFounException {
         return ResponseEntity.ok(athleteService.findAll(parameters));
@@ -65,17 +76,6 @@ public class AthleteController {
         try {
             long id = Long.parseLong(stringId);
             return ResponseEntity.ok(athleteService.findBySport(id, parameters));
-        } catch (NumberFormatException ex) {
-            throw new BadRequestException("Invalid parameter: must be a number");
-        }
-    }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") String stringId) throws BadRequestException, ResourceNotFounException {
-        try {
-            long id = Long.parseLong(stringId);
-            athleteService.delete(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (NumberFormatException ex) {
             throw new BadRequestException("Invalid parameter: must be a number");
         }
